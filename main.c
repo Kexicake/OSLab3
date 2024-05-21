@@ -8,7 +8,7 @@
 
 FILE *address_txt;
 FILE *backing_store_bin;
-FILE *correct2_txt;
+FILE *out_txt;
 
 struct page{
     int offset;
@@ -128,7 +128,7 @@ void process_virtual_page(struct page current_page)
     insert_TLB_FIFO(page_number,frame_number);
     value = physical_memory[frame_number][offset];
 
-    fprintf(correct2_txt, "Virtual address: %d Physical address: %d Value: %d\n", logical_address, (frame_number << 8) | offset, value);
+    fprintf(out_txt, "Virtual address: %d Physical address: %d Value: %d\n", logical_address, (frame_number << 8) | offset, value);
 
 }
 
@@ -139,9 +139,9 @@ int main(int argc, char *argv[]) {
 
     address_txt = fopen(argv[1], "r");
     backing_store_bin = fopen("BACKING_STORE.bin", "rb"); // чтение BACKING_STORE в доичном формате
-    correct2_txt = fopen(argv[2], "w"); // Открываем файл для записи
+    out_txt = fopen(argv[2], "w"); // Открываем файл для записи
 
-    if (address_txt == NULL || backing_store_bin == NULL || correct2_txt == NULL) {
+    if (address_txt == NULL || backing_store_bin == NULL || out_txt == NULL) {
         return -1;
     }
 
@@ -156,10 +156,10 @@ int main(int argc, char *argv[]) {
     double Page_error_rate = page_miss / (double)processed_address;
     double TLB_error_rate = hit / (double)processed_address;
 
-    fprintf(correct2_txt, "Частота ошибок страниц = %.3f\n",Page_error_rate);
-    fprintf(correct2_txt, "Частота попаданий в TLB  = %.3f\n", TLB_error_rate);
+    fprint("Частота ошибок страниц = %f\n", Page_error_rate);
+    fprint("Частота попаданий в TLB  = %f\n", TLB_error_rate);
 
     fclose(address_txt);
     fclose(backing_store_bin);
-    fclose(correct2_txt);
+    fclose(out_txt);
 }
